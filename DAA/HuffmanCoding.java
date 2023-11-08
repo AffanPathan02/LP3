@@ -1,77 +1,74 @@
-// Huffman Coding in Java
-
-import java.util.PriorityQueue;
-import java.util.Comparator;
-
-class HuffmanNode {
-  int item;
-  char c;
-  HuffmanNode left;
-  HuffmanNode right;
+import java.util.*;
+class HuffmanNode{
+    int item;
+    char c;
+    HuffmanNode left;
+    HuffmanNode right;
 }
 
-// For comparing the nodes
-class ImplementComparator implements Comparator<HuffmanNode> {
-  public int compare(HuffmanNode x, HuffmanNode y) {
-    return x.item - y.item;
-  }
+class ImplementComparator implements Comparator<HuffmanNode>{
+    public int compare(HuffmanNode x, HuffmanNode y){
+        return x.item - y.item;
+    }
 }
-
-// IMplementing the huffman algorithm
-public class HuffmanCoding {
-  public static void printCode(HuffmanNode root, String s) {
-    if (root.left == null && root.right == null && Character.isLetter(root.c)) {
-
-      System.out.println(root.c + "   |  " + s);
-
-      return;
+public class Main{
+    public static HuffmanNode buildHuffman(char[] charArray,int[] charFreq){
+        int n=charArray.length;
+        PriorityQueue<HuffmanNode> q= new PriorityQueue<HuffmanNode>(n,new ImplementComparator());
+        
+        for (int i=0;i<n ;i++ ) {
+            HuffmanNode hn= new HuffmanNode();
+            hn.c=charArray[i];
+            hn.item=charFreq[i];
+            hn.left=null;
+            hn.right=null;
+            q.add(hn);
+        }
+        
+        while(q.size()>1){
+            HuffmanNode x= q.poll();
+            HuffmanNode y= q.poll();
+            HuffmanNode f = new HuffmanNode();
+            
+            f.item=x.item+y.item;
+            f.c='-';
+            f.left=x;
+            f.right=y;
+            q.add(f);
+        }
+        
+        return q.poll();
     }
-    printCode(root.left, s + "0");
-    printCode(root.right, s + "1");
-  }
-
-  public static void main(String[] args) {
-
-    int n = 4;
-    char[] charArray = { 'A', 'B', 'C', 'D' };
-    int[] charfreq = { 5, 1, 6, 3 };
-
-    PriorityQueue<HuffmanNode> q = new PriorityQueue<HuffmanNode>(n, new ImplementComparator());
-
-    for (int i = 0; i < n; i++) {
-      HuffmanNode hn = new HuffmanNode();
-
-      hn.c = charArray[i];
-      hn.item = charfreq[i];
-
-      hn.left = null;
-      hn.right = null;
-
-      q.add(hn);
+    
+    public static void printHuffman(HuffmanNode root,String s){
+        if(root.left == null && root.right==null && Character.isLetter(root.c)){
+            System.out.println(root.c +" | " +s);
+            return;
+        }
+        printHuffman(root.left,s + "0");
+        printHuffman(root.right,s + "1");
     }
+    
+    public static void main (String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-    HuffmanNode root = null;
+        System.out.print("Enter the number of characters: ");
+        int n = scanner.nextInt();
 
-    while (q.size() > 1) {
+        char[] charArray = new char[n];
+        int[] charfreq = new int[n];
 
-      HuffmanNode x = q.peek();
-      q.poll();
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter character " + (i + 1) + ": ");
+            charArray[i] = scanner.next().charAt(0);
+            System.out.print("Enter frequency for character " + charArray[i] + ": ");
+            charfreq[i] = scanner.nextInt();
+        }
 
-      HuffmanNode y = q.peek();
-      q.poll();
+        HuffmanNode root = buildHuffman(charArray, charfreq);
 
-      HuffmanNode f = new HuffmanNode();
-
-      f.item = x.item + y.item;
-      f.c = '-';
-      f.left = x;
-      f.right = y;
-      root = f;
-
-      q.add(f);
+        System.out.println(" Char | Huffman code ");
+        System.out.println("--------------------");
+        printHuffman(root, "");
     }
-    System.out.println(" Char | Huffman code ");
-    System.out.println("--------------------");
-    printCode(root, "");
-  }
 }
